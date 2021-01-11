@@ -17,11 +17,11 @@ def get_sensors():
 @app.route("/sensors", methods=["POST"])
 def post_sensor():
     if not request.json:
-        abort(400, message="Please, post the information about sensor.")
+        abort(400)
     if not "name" in request.json:
-        abort(400, message="Please, post the information about sensor.")
+        abort(400)
     if not "unit" in request.json:
-        abort(400, message="Please, post the information about sensor.")
+        abort(400)
 
     sensor_id = uuid.uuid4().hex
     sensor = {sensor_id :{"uuid": sensor_id, "name": request.json.get("name", ""),"unit": request.json.get("unit", ""),"value": request.json.get("value", "")}}
@@ -47,6 +47,17 @@ def delete_sensor_by_uuid(sensor_uuid):
     else:
         abort(404)
 
+
+@app.route("/sensors/<string:sensor_uuid>", methods=["PATCH"])
+def patch_sensor_by_uuid(sensor_uuid):
+    if sensor_uuid in sensors:
+        if not "value" in request.json:
+            abort(400)
+        else:
+            sensors[sensor_uuid]["value"] = request.json.get("value", "")
+            return(jsonify(sensors))
+    else:
+        abort(404)
 
 
 
