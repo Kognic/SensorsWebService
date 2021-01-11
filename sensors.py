@@ -1,6 +1,7 @@
 from flask import Flask, request, jsonify, abort
 import json
-import uuid 
+import uuid
+import re
   
 
 app = Flask(__name__)
@@ -11,7 +12,11 @@ sensors = {}
 
 @app.route("/sensors", methods=["GET"])
 def get_sensors():
-    return(jsonify(sensors))
+    if "name" in request.args:
+        sensor = [sensor for sensor in sensors.values() if re.match(str(request.args.get("name")), sensor["name"], re.IGNORECASE)]
+        return jsonify(sensor)
+
+    return(jsonify([sensor for sensor in sensors.values()]))
 
 
 @app.route("/sensors", methods=["POST"])
